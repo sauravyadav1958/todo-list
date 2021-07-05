@@ -21,15 +21,18 @@ function getAndUpdate() {
         itemJsonArray = [];
         itemJsonArray.push([tit.value, desc.value, 0]);
         localStorage.setItem('itemsJson', JSON.stringify(itemJsonArray))
+        tit.value = '';
+        desc.value = '';
     }
     else {
         itemJsonArrayStr = localStorage.getItem('itemsJson')
         itemJsonArray = JSON.parse(itemJsonArrayStr);
         itemJsonArray.push([tit.value, desc.value, 0]);
         localStorage.setItem('itemsJson', JSON.stringify(itemJsonArray))
+        tit.value = '';
+        desc.value = '';
     }
-    tit.value = '';
-    desc.value = '';
+    
     update();
 }
 
@@ -56,10 +59,10 @@ function update() {
             <td  >${element[1]}</td>
             <th style="display:none;" >${element[2]}</th>
             <td style="text-align:center;">
-                <button style="display:none;" id="undo1" class="btn btn-sm btn-warning" onclick="undo(${index})"><i class="fa fa-undo" style="color:white;"></i></button>
-                <button id="done1" class="btn btn-sm btn-success" onclick="done(${index})"><i class="fa fa-check"></i></button>
-                <button class="btn btn-sm btn-primary" onclick="edit(${index})"><i class="fa fa-edit"></i></button>
-                <button class="btn btn-sm btn-danger " onclick="deleted(${index})"><i class="fa fa-close"></i></button>
+                <button style="display:none;" id="undo1" title="Undo" class="btn btn-sm btn-warning" onclick="undo(${index})"><i class="fa fa-undo" style="color:white;"></i></button>
+                <button id="done1" title="Done" class="btn btn-sm btn-success" onclick="done(${index})"><i class="fa fa-check"></i></button>
+                <button title="edit" class="btn btn-sm btn-primary" onclick="edit(${index})"><i class="fa fa-edit"></i></button>
+                <button title="Delete" class="btn btn-sm btn-danger " onclick="deleted(${index})"><i class="fa fa-close"></i></button>
             </td> 
             
         </tr>`;
@@ -178,16 +181,24 @@ savebutton.addEventListener("click", function () {
     //tit = document.getElementById('title');
     //console.log(document.querySelectorAll(".slect2"))
     //desc = document.getElementById('description');
-    itemJsonArrayStr = localStorage.getItem('itemsJson');
-    itemJsonArray = JSON.parse(itemJsonArrayStr);
-    saveindex = document.getElementById('saveindex').value;
-    itemJsonArray[saveindex][0] = tit.value;
-    itemJsonArray[saveindex][1] = desc.value;
-    localStorage.setItem('itemsJson', JSON.stringify(itemJsonArray));
-    add.style.display = "inline";
-    save.style.display = "none";
-    tit.value = '';
-    desc.value = '';
+    if (tit.value == "" && desc.value == "")
+        confirm("Kindly Enter Title and Description!!!")
+    else if (tit.value == "")
+        confirm("Kindly Enter Title!!!")
+    else if (desc.value == "")
+        confirm("Kindly Enter Description!!!")
+    else {
+        itemJsonArrayStr = localStorage.getItem('itemsJson');
+        itemJsonArray = JSON.parse(itemJsonArrayStr);
+        saveindex = document.getElementById('saveindex').value;
+        itemJsonArray[saveindex][0] = tit.value;
+        itemJsonArray[saveindex][1] = desc.value;
+        localStorage.setItem('itemsJson', JSON.stringify(itemJsonArray));
+        add.style.display = "inline";
+        save.style.display = "none";
+        tit.value = '';
+        desc.value = '';
+    }
     update();
 })
 
@@ -208,7 +219,7 @@ function clearStorage() {
 // To perform search in the list
 let search = document.getElementById("search");
 search.addEventListener("input", function () {
-    //event.preventDefault();
+    //if(search.keyCode == 13) return false;
     let trlist = document.querySelectorAll("tr");
     Array.from(trlist).forEach(function (item) {
         if (item.getElementsByTagName("th")[0].innerText == 'SNo')
